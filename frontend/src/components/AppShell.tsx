@@ -1,0 +1,12 @@
+import { type ReactNode } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useSecurity } from "../context/SecurityContext";
+
+const nav = [["/overview", "Overview", "▦"], ["/activity", "Activity", "⌁"], ["/incidents", "Incidents", "⌾"], ["/policy", "Policy & Response", "≡"], ["/evaluation", "Evaluation", "◫"]];
+const titles: Record<string, [string, string]> = { "/overview": ["Overview", "Security operations / overview"], "/activity": ["Activity", "Telemetry / recent activity"], "/incidents": ["Incidents", "Security operations / incidents"], "/policy": ["Policy & Response", "Deterministic response recommendations"], "/evaluation": ["Evaluation", "System validation / fixed scenarios"] };
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const { status, selectedUser, setSelectedUser, error } = useSecurity(); const location = useLocation();
+  const [title, subtitle] = location.pathname.startsWith("/incidents/") ? ["Incident investigation", "Evidence / deterministic investigation"] : titles[location.pathname] ?? titles["/overview"];
+  return <div className="app-shell"><aside className="sidebar"><div className="brand"><span className="brand-mark">◇</span><div><strong>IntentShield</strong><small>SECURITY INTELLIGENCE</small></div></div><nav aria-label="Primary navigation">{nav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => isActive || (to === "/incidents" && location.pathname.startsWith("/incidents/")) ? "nav-link active" : "nav-link"}><span aria-hidden>{icon}</span>{label}</NavLink>)}</nav><div className="system-status"><span className={`status-dot ${status}`} /><div><strong>System status</strong><small>{status === "connected" ? "Backend connected" : status === "checking" ? "Checking backend" : "Backend unavailable"}</small></div></div></aside><div className="workspace"><header className="topbar"><div><h1>{title}</h1><p>{subtitle}</p></div><label className="user-picker"><span className="status-dot connected" /> <span className="visually-hidden">Selected user</span><select value={selectedUser} onChange={event => setSelectedUser(event.target.value)}><option value="investigation-user">investigation-user</option><option value="normal-user">normal-user</option><option value="simulated-user">simulated-user</option></select></label></header>{error && <div className="app-error" role="alert">{error}</div>}<main className="page-content">{children}</main></div></div>;
+}

@@ -1,15 +1,17 @@
 # IntentShield
 
-IntentShield is a prototype security platform for recording security-relevant user or application activity. Future milestones will analyze activity sequences for risky intent. The current system provides reliable event storage, visibility, and deterministic activity simulations. It intentionally contains no authentication, AI/LLM integration, risk scoring, RAG, agents, or intervention logic.
+IntentShield is a prototype security platform for recording security-relevant user or application activity, deriving deterministic evidence, and optionally asking an LLM for a structured, advisory interpretation of that evidence. It intentionally contains no authentication, agents, RAG, real interventions, or continuous monitoring.
 
 ## Current architecture
 
-- **React + TypeScript + Vite** provides one dashboard at `http://localhost:5173`.
+- **React + TypeScript + Vite** provides a routed security-operations UI at `http://localhost:5173`.
 - **FastAPI** exposes a small JSON API at `http://localhost:8000`.
 - **PostgreSQL** persists activities, running locally via Docker Compose.
 - **SQLAlchemy** maps the `activities` table. The `metadata` column is PostgreSQL `JSONB` (with a portable JSON variant that keeps the unit tests fast).
 
 The backend keeps routes, database models, and database operations separate. This is enough structure to keep later additions understandable without adding a framework of abstractions prematurely.
+
+The frontend has purpose-specific pages for **Overview**, **Activity**, **Incidents**, **Policy & Response**, and **Evaluation**. They all use the same typed API layer; navigation does not create mock data or call the optional intent endpoint. The dashboard visually distinguishes observed telemetry, deterministic system output, and advisory AI inference.
 
 ## Activity simulator
 

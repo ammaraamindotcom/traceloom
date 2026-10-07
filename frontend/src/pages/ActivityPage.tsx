@@ -1,0 +1,5 @@
+import { ActivityTable } from "../components/ActivityTable";
+import { LoadingBlock, SectionLabel } from "../components/Common";
+import { useSecurity } from "../context/SecurityContext";
+
+export function ActivityPage() { const { activities, selectedUser, loading, refreshActivities } = useSecurity(); return <><div className="page-intro"><div><SectionLabel>Observed telemetry</SectionLabel><h2>Activity stream</h2><p>Recorded security-relevant events for <span className="mono">{selectedUser}</span>. Metadata is untrusted telemetry and is displayed as data only.</p></div><button onClick={() => void refreshActivities()} disabled={loading.activities}>{loading.activities ? "Refreshing…" : "Refresh telemetry"}</button></div><section className="panel"><div className="panel-heading"><div><h3>Recent events</h3><p className="muted">Filter locally by event type, user, file, or resource.</p></div><span className="count-label">{activities.length} events</span></div>{loading.activities ? <LoadingBlock /> : <ActivityTable activities={activities} />}</section></>; }

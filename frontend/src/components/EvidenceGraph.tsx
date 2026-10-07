@@ -1,0 +1,10 @@
+import { useMemo, useState } from "react";
+import type { EvidenceGraphNode, EvidenceGraphEdge } from "../api/activities";
+
+export function EvidenceGraph({ nodes, edges }: { nodes: EvidenceGraphNode[]; edges: EvidenceGraphEdge[] }) {
+  const [selected, setSelected] = useState<EvidenceGraphNode | null>(null);
+  const layout = useMemo(() => nodes.map((node, index) => ({ node, x: 90 + (index % 3) * 210, y: 60 + Math.floor(index / 3) * 110 })), [nodes]);
+  const find = (id: string) => layout.find(item => item.node.id === id);
+  if (!nodes.length) return <div className="empty-state"><strong>No evidence graph</strong><p>A graph is created only when a deterministic high-risk incident exists.</p></div>;
+  return <div className="graph-wrap"><div className="graph-legend"><span className="node-key activity">Observed telemetry</span><span className="node-key signal">Deterministic signal</span><span className="node-key incident">Incident</span><span className="node-key intent">AI inference</span></div><div className="graph-canvas"><svg viewBox={`0 0 650 ${Math.max(300, Math.ceil(nodes.length / 3) * 110 + 50)}`} role="img" aria-label="Evidence relationship graph">{edges.map(edge => { const source = find(edge.source); const target = find(edge.target); if (!source || !target) return null; return <line key={`${edge.source}-${edge.target}-${edge.relationship}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} className="graph-edge" />; })}{layout.map(({ node, x, y }) => <g key={node.id} className={`svg-node svg-${node.type.toLowerCase()}`} tabIndex={0} role="button" onClick={() => setSelected(node)} onKeyDown={event => { if (event.key === "Enter") setSelected(node); }}><rect x={x - 76} y={y - 26} width="152" height="52" rx="7" /><text x={x} y={y - 4} textAnchor="middle">{node.type}</text><text x={x} y={y + 13} textAnchor="middle">{node.label.length > 20 ? `${node.label.slice(0, 18)}…` : node.label}</text></g>)}</svg></div>{selected && <div className="graph-inspector"><strong>{selected.label}</strong><span className="badge">{selected.type}</span><code>{JSON.stringify(selected.data, null, 2)}</code></div>}</div>;
+}
