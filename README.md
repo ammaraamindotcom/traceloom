@@ -1,6 +1,6 @@
-# IntentShield
+# TraceLoom
 
-IntentShield is a prototype security platform for recording security-relevant user or application activity, deriving deterministic evidence, and optionally asking an LLM for a structured, advisory interpretation of that evidence. It intentionally contains no authentication, agents, RAG, real interventions, or continuous monitoring.
+TraceLoom is a prototype behavioral security platform for recording controlled synthetic activity, deriving deterministic evidence, and optionally asking an LLM for a structured, advisory interpretation of that evidence. Synthetic subjects are test identities, not authenticated users or real employees. TraceLoom intentionally contains no authentication, agents, RAG, real interventions, or continuous monitoring.
 
 ## Current architecture
 
@@ -142,7 +142,7 @@ The test suite mocks the OpenAI client, so tests make no network calls and do no
 
 ## Incident investigation and evidence graph
 
-IntentShield can now project a high-risk latest session into a dynamic incident investigation. Incidents are derived at request time from existing telemetry; this milestone adds no incident database table and does not duplicate activity records.
+TraceLoom can project a high-risk latest session into a dynamic incident investigation. Incidents are derived at request time from existing controlled telemetry; this milestone adds no incident database table and does not duplicate activity records.
 
 ```text
 Telemetry

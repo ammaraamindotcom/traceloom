@@ -54,8 +54,11 @@ def test_low_risk_sequence_returns_clean_no_incident_response(client):
     client.post("/simulate/baseline-history?user_id=normal-user")
     client.post("/simulate/normal-workday?user_id=normal-user")
 
+    analysis_response = client.get("/analysis/normal-user")
     response = client.get("/incidents/normal-user")
 
+    assert analysis_response.status_code == 200
+    assert analysis_response.json()["risk_level"] == "low"
     assert response.status_code == 200
     body = response.json()
     assert body["incident"] is None
