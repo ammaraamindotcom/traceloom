@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import CORS_ORIGINS, validate_production_config
 from app.database import Base, engine
 from app.routes.activities import router as activities_router
 from app.routes.analysis import router as analysis_router
@@ -18,14 +19,15 @@ from app.routes.simulator import router as simulator_router
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     # Migrations can replace this bootstrap step once the schema evolves.
+    validate_production_config()
     Base.metadata.create_all(bind=engine)
     yield
 
 
-app = FastAPI(title="IntentShield API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="TraceLoom API", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],

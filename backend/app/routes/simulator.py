@@ -1,6 +1,6 @@
 """Routes for inserting deterministic activity simulations."""
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -8,6 +8,7 @@ from app.database import get_db
 from app.schemas import ActivityRead
 from app.services.activity_service import create_activities
 from app.services.simulator_service import SCENARIO_NAMES, generate_scenario
+from app.services.rate_limit_service import limit_demo_writes
 
 
 router = APIRouter(prefix="/simulate", tags=["simulator"])
@@ -16,9 +17,11 @@ router = APIRouter(prefix="/simulate", tags=["simulator"])
 @router.post("/{scenario_name}", response_model=list[ActivityRead], status_code=status.HTTP_201_CREATED)
 def simulate_scenario(
     scenario_name: str,
+    request: Request,
     user_id: str = Query(default="simulated-user", min_length=1, max_length=255),
     db: Session = Depends(get_db),
 ) -> list[ActivityRead]:
+    limit_demo_writes(request)
     if scenario_name not in SCENARIO_NAMES:
         raise HTTPException(status_code=404, detail=f"Unknown scenario: {scenario_name}")
 

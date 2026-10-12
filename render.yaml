@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: traceloom-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: TRACELOOM_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-6-astra
+      - key: INTENT_ACCESS_TOKEN
+        sync: false
+      - key: INTENT_RATE_LIMIT_REQUESTS
+        value: "3"
+      - key: INTENT_RATE_LIMIT_WINDOW_SECONDS
+        value: "3600"
+      - key: WRITE_RATE_LIMIT_REQUESTS
+        value: "30"
+      - key: WRITE_RATE_LIMIT_WINDOW_SECONDS
+        value: "3600"

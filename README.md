@@ -1,5 +1,7 @@
 # TraceLoom
 
+For Render, PostgreSQL, and Vercel setup, including the production environment-variable checklist and public-demo safeguards, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 TraceLoom is a prototype behavioral security platform for recording controlled synthetic activity, deriving deterministic evidence, and optionally asking an LLM for a structured, advisory interpretation of that evidence. Synthetic subjects are test identities, not authenticated users or real employees. TraceLoom intentionally contains no authentication, agents, RAG, real interventions, or continuous monitoring.
 
 ## Current architecture

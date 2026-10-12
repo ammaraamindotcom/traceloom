@@ -1,6 +1,6 @@
 """Deterministic policy recommendations and explicitly safe dry-run simulations."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -15,6 +15,7 @@ from app.services.activity_service import list_recent_activities
 from app.services.analysis_service import analyze_user_activities
 from app.services.intervention_service import list_intervention_audits, simulate_intervention
 from app.services.policy_service import evaluate_policy
+from app.services.rate_limit_service import limit_demo_writes
 
 
 router = APIRouter(prefix="/policy", tags=["policy"])
@@ -39,8 +40,10 @@ def get_policy(user_id: str, db: Session = Depends(get_db)) -> PolicyResult:
 def simulate_policy_intervention(
     user_id: str,
     request: DryRunInterventionRequest,
+    http_request: Request,
     db: Session = Depends(get_db),
 ) -> DryRunInterventionResult:
+    limit_demo_writes(http_request)
     try:
         policy = _policy_for_user(db, user_id)
         recommendation = next(

@@ -27,7 +27,7 @@ except ImportError:  # Allows the rest of the app and mocked tests to run before
     class APITimeoutError(Exception):  # type: ignore[no-redef]
         pass
 
-from app.config import INTENTSHIELD_ENV, OPENAI_API_KEY, OPENAI_MODEL
+from app.config import APP_ENV, OPENAI_API_KEY, OPENAI_MODEL
 from app.prompts.intent_system_prompt import INTENT_SYSTEM_PROMPT
 from app.schemas import AnalysisResult, IntentInference
 
@@ -57,7 +57,7 @@ def _safe_provider_error_message(exc: Exception) -> str:
 
 
 def _log_provider_failure(exc: Exception) -> None:
-    if INTENTSHIELD_ENV in {"development", "dev"}:
+    if APP_ENV in {"development", "dev"}:
         logger.warning(
             "OpenAI intent inference failed: type=%s status=%s code=%s message=%s",
             type(exc).__name__,
